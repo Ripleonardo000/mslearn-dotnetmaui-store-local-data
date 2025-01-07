@@ -1,60 +1,86 @@
 ﻿using People.Models;
+using SQLite;
+using System;
+using System.Collections.Generic;
 
-namespace People;
-
-public class PersonRepository
+namespace People
 {
-    string _dbPath;
-
-    public string StatusMessage { get; set; }
-
-    // TODO: Add variable for the SQLite connection
-
-    private void Init()
+    public class PersonRepository
     {
-        // TODO: Add code to initialize the repository         
-    }
+        private SQLiteConnection conn; // Declarar `conn` como miembro de la clase
+        private readonly string _dbPath;
 
-    public PersonRepository(string dbPath)
-    {
-        _dbPath = dbPath;                        
-    }
+        public string StatusMessage { get; set; }
 
-    public void AddNewPerson(string name)
-    {            
-        int result = 0;
-        try
+        public PersonRepository(string dbPath)
         {
-            // TODO: Call Init()
-
-            // basic validation to ensure a name was entered
-            if (string.IsNullOrEmpty(name))
-                throw new Exception("Valid name required");
-
-            // TODO: Insert the new person into the database
-            result = 0;
-
-            StatusMessage = string.Format("{0} record(s) added (Name: {1})", result, name);
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = string.Format("Failed to add {0}. Error: {1}", name, ex.Message);
+            _dbPath = dbPath;
         }
 
-    }
-
-    public List<Person> GetAllPeople()
-    {
-        // TODO: Init then retrieve a list of Person objects from the database into a list
-        try
+        private void Init()
         {
-            
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = string.Format("Failed to retrieve data. {0}", ex.Message);
+            if (conn != null)
+                return;
+
+            try
+            {
+                conn = new SQLiteConnection(_dbPath); // Inicializar conexión SQLite
+                conn.CreateTable<Person>(); // Crear tabla si no existe
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error initializing database: {ex.Message}";
+            }
         }
 
-        return new List<Person>();
+        public void AddNewPerson(string name)
+        {
+            int result = 0;
+
+            try
+            {
+                Init();
+
+                // Validación básica
+                if (string.IsNullOrEmpty(name))
+                    throw new Exception("Valid name required");
+
+                result = conn.Insert(new Person { Name = name });
+                StatusMessage = $"{result} record(s) added [Name: {name}]";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Failed to add {name}. Error: {ex.Message}";
+            }
+        }
+
+        public List<Person> GetAllPeople()
+        {
+            try
+            {
+                Init();
+                return conn.Table<Person>().ToList(); // Consultar todos los registros
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Failed to retrieve data. {ex.Message}";
+                return new List<Person>();
+            }
+        }
+
+        public void DeletePerson(int id)
+        {
+            try
+            {
+                Init(); // Inicializa la conexión si no está lista
+                conn.Delete<Person>(id); // Elimina el registro por ID
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Failed to delete person. {ex.Message}";
+            }
+        }
+
     }
 }
+

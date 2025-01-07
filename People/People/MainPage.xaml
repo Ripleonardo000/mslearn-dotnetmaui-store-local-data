@@ -3,37 +3,83 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:model="clr-namespace:People.Models"
              x:Class="People.MainPage" 
-             BackgroundColor="{DynamicResource Light}">
+             Title="Leonardo Andrade"
+             
+             
+             BackgroundColor="#E8F5E9">
 
-    <Grid Padding="5" RowSpacing="5" ColumnSpacing="5"
-          RowDefinitions="Auto,Auto,Auto,Auto,*">
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="15">
 
-        <Entry x:Name="newPerson"
-           Placeholder="Enter name" />
+            <!-- Tarjeta Personalizada -->
+            <Frame BackgroundColor="#C8E6C9" CornerRadius="10" Padding="20" HasShadow="True">
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Image Source="profile_photo.png" HeightRequest="100" WidthRequest="100" />
+                    <Label Text="Leonardo Andrade" FontSize="20" TextColor="#2E7D32" HorizontalOptions="Center" />
+                    <Label Text="Edad: 21" FontSize="16" TextColor="#388E3C" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Frame>
 
-        <Button Text="Add Person"
-            Grid.Row="1"
-            Clicked="OnNewButtonClicked" />
+            <!-- Entrada de Nuevo Usuario -->
+            <Entry x:Name="newPerson"
+                   Placeholder="Ingresa un nombre"
+                   FontSize="16"
+                   TextColor="Black"
+                   BackgroundColor="White"
+                   Margin="0,10,0,0"
+                   PlaceholderColor="#9E9E9E" />
 
-        <Label x:Name="statusMessage"
-           TextColor="{StaticResource Primary}"
-           Grid.Row="2" />
+            <!-- Botón para Agregar Persona -->
+            <Button Text="Agregar Persona"
+                    Clicked="OnNewButtonClicked"
+                    BackgroundColor="#4CAF50"
+                    TextColor="White"
+                    CornerRadius="10"
+                    HeightRequest="50" />
 
-        <Button Text="Get All People"
-            Grid.Row="3"
-            Clicked="OnGetButtonClicked" />
+            <!-- Mensaje de Estado -->
+            <Label x:Name="statusMessage"
+                   FontSize="14"
+                   TextColor="#1B5E20"
+                   HorizontalTextAlignment="Center"
+                   Margin="10" />
 
-        <CollectionView x:Name="peopleList" Grid.Row="4">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:Person">
-                    <Grid ColumnDefinitions="*,2*">
-                        <Label Text="{Binding Id}" TextColor="{StaticResource Primary}"/>
-                        <Label Grid.Column="1" Text="{Binding Name}" TextColor="{StaticResource Primary}"/>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            <!-- Botón para Obtener Personas -->
+            <Button Text="Obtener Personas"
+                    Clicked="OnGetButtonClicked"
+                    BackgroundColor="#388E3C"
+                    TextColor="White"
+                    CornerRadius="10"
+                    HeightRequest="50" />
 
-    </Grid>
+            <!-- Lista de Personas -->
+            <Label Text="Lista de Personas"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="#2E7D32" />
+
+            <CollectionView x:Name="peopleList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Person">
+                        <Grid Padding="5" ColumnDefinitions="*,Auto">
+                            <Label Text="{Binding Name}" FontSize="16" TextColor="Black" />
+                            <Button Text="Eliminar"
+        CommandParameter="{Binding .}"
+        Clicked="OnDeleteButtonClicked"
+        BackgroundColor="#D32F2F"
+        TextColor="White"
+        CornerRadius="5"
+        Margin="90,0,0,0"
+        VerticalOptions="Center" />
+
+
+                        </Grid>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>
